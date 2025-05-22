@@ -21,7 +21,7 @@ SET time_zone = "+00:00";
 -- Base de datos: `proyecto_tfg`
 --
 
--- --------------------------------------------------------
+----------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `competicion`
