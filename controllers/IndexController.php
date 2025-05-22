@@ -1,6 +1,7 @@
 <?php
-
-echo "Hello from IndexController!";
-echo "<br>";
-
-?>
+class IndexController {
+    public function index() {
+        $view = new View();
+        $view->show('index.php');
+    }
+}
