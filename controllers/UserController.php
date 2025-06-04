@@ -19,10 +19,10 @@ class UserController
 
             $usuario = new UsuarioModel();
 
-            if ($usuario->usuarioExistente($nombre_usuario, $email)) {
+            /*if ($usuario->usuarioExistente($nombre_usuario, $email)) {
                 echo "Error: Correo o nombre de usuario ya registrado";
                 return;
-            }
+            }*/
 
             $contraseña_hash = password_hash($contraseña, PASSWORD_BCRYPT);
 
@@ -33,13 +33,13 @@ class UserController
             $ok = $usuario->save();
 
             if ($ok) {
-                echo "Usuario registrado correctamente.";
+                echo "Usuario registrado correctamente."; //Cambiar por vista bonita
             } else {
-                echo "Error al registrar usuario.";
+                echo "Error al registrar usuario."; //Cambiar por vista bonita
             }
         } else {
             $vista = new View();
-            $vista->show("register.php");
+            $vista->show("register.php"); //Cambiar?
         }
     }
 
@@ -65,5 +65,17 @@ class UserController
             $vista = new View();
             $vista->show("login.php");
         }
+    }
+
+    public function logout()
+    {
+        require_once 'libs/auth.php';
+        session_start();
+        session_unset();
+        session_destroy();
+
+
+        // header('Location: index.php?controller=User&action=login');
+        exit();
     }
 }

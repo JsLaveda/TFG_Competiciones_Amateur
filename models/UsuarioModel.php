@@ -126,6 +126,8 @@ class UsuarioModel
     }
 
     //Añadir funcion que verifique si el nombre de suario y el correo están registrados
+    //Puedes cambiarle el nombre en el UserController al que tu quieras, cuando la terminas borra estos comentarios
+    //Y descomenta el if del UserController para que funcione
 
     // Eliminar
     public function delete()
