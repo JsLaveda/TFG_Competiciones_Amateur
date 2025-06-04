@@ -17,9 +17,15 @@ class UserController
             $email = $_POST['email'];
             $contraseña = $_POST['contraseña'];
 
+            $usuario = new UsuarioModel();
+
+            if ($usuario->usuarioExistente($nombre_usuario, $email)) {
+                echo "Error: Correo o nombre de usuario ya registrado";
+                return;
+            }
+
             $contraseña_hash = password_hash($contraseña, PASSWORD_BCRYPT);
 
-            $usuario = new UsuarioModel();
             $usuario->setNombre_usuario($nombre_usuario);
             $usuario->setNombre($nombre);
             $usuario->setEmail($email);

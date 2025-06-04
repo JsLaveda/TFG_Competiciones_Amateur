@@ -125,6 +125,8 @@ class UsuarioModel
         }
     }
 
+    //Añadir funcion que verifique si el nombre de suario y el correo están registrados
+
     // Eliminar
     public function delete()
     {
@@ -132,6 +134,7 @@ class UsuarioModel
         $consulta->bindParam(1, $this->id_usuario);
         $consulta->execute();
     }
+
 
     public function verificarLogin($nombre_usuario, $contraseña)
     {
