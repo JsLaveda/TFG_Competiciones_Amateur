@@ -20,23 +20,59 @@ class UsuarioModel
     }
 
     // Getters y setters
-    public function getId_usuario() { return $this->id_usuario; }
-    public function setId_usuario($id) { $this->id_usuario = $id; }
+    public function getId_usuario()
+    {
+        return $this->id_usuario;
+    }
+    public function setId_usuario($id)
+    {
+        $this->id_usuario = $id;
+    }
 
-    public function getNombre_usuario() { return $this->nombre_usuario; }
-    public function setNombre_usuario($nombre_usuario) { $this->nombre_usuario = $nombre_usuario; }
+    public function getNombre_usuario()
+    {
+        return $this->nombre_usuario;
+    }
+    public function setNombre_usuario($nombre_usuario)
+    {
+        $this->nombre_usuario = $nombre_usuario;
+    }
 
-    public function getNombre() { return $this->nombre; }
-    public function setNombre($nombre) { $this->nombre = $nombre; }
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+    }
 
-    public function getEmail() { return $this->email; }
-    public function setEmail($email) { $this->email = $email; }
+    public function getEmail()
+    {
+        return $this->email;
+    }
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
 
-    public function getContraseña() { return $this->contraseña; }
-    public function setContraseña($contraseña) { $this->contraseña = $contraseña; }
+    public function getContraseña()
+    {
+        return $this->contraseña;
+    }
+    public function setContraseña($contraseña)
+    {
+        $this->contraseña = $contraseña;
+    }
 
-    public function getId_equipo() { return $this->id_equipo; }
-    public function setId_equipo($id_equipo) { $this->id_equipo = $id_equipo; }
+    public function getId_equipo()
+    {
+        return $this->id_equipo;
+    }
+    public function setId_equipo($id_equipo)
+    {
+        $this->id_equipo = $id_equipo;
+    }
 
     // Obtener todos los usuarios
     public function getAll()
@@ -59,27 +95,33 @@ class UsuarioModel
     // Insertar o actualizar
     public function save()
     {
-        if (!isset($this->id_usuario)) {
-            $consulta = $this->db->prepare(
-                'INSERT INTO usuario (nombre_usuario, nombre, email, contraseña, id_equipo) VALUES (?, ?, ?, ?, ?)'
-            );
-            $consulta->bindParam(1, $this->nombre_usuario);
-            $consulta->bindParam(2, $this->nombre);
-            $consulta->bindParam(3, $this->email);
-            $consulta->bindParam(4, $this->contraseña);
-            $consulta->bindParam(5, $this->id_equipo);
-            $consulta->execute();
-        } else {
-            $consulta = $this->db->prepare(
-                'UPDATE usuario SET nombre_usuario = ?, nombre = ?, email = ?, contraseña = ?, id_equipo = ? WHERE id_usuario = ?'
-            );
-            $consulta->bindParam(1, $this->nombre_usuario);
-            $consulta->bindParam(2, $this->nombre);
-            $consulta->bindParam(3, $this->email);
-            $consulta->bindParam(4, $this->contraseña);
-            $consulta->bindParam(5, $this->id_equipo);
-            $consulta->bindParam(6, $this->id_usuario);
-            $consulta->execute();
+        try {
+            if (!isset($this->id_usuario)) {
+                $consulta = $this->db->prepare(
+                    'INSERT INTO usuario (nombre_usuario, nombre, email, contraseña, id_equipo) VALUES (?, ?, ?, ?, ?)'
+                );
+                $consulta->bindParam(1, $this->nombre_usuario);
+                $consulta->bindParam(2, $this->nombre);
+                $consulta->bindParam(3, $this->email);
+                $consulta->bindParam(4, $this->contraseña);
+                $consulta->bindParam(5, $this->id_equipo);
+
+                return $consulta->execute();
+            } else {
+                $consulta = $this->db->prepare(
+                    'UPDATE usuario SET nombre_usuario = ?, nombre = ?, email = ?, contraseña = ?, id_equipo = ? WHERE id_usuario = ?'
+                );
+                $consulta->bindParam(1, $this->nombre_usuario);
+                $consulta->bindParam(2, $this->nombre);
+                $consulta->bindParam(3, $this->email);
+                $consulta->bindParam(4, $this->contraseña);
+                $consulta->bindParam(5, $this->id_equipo);
+                $consulta->bindParam(6, $this->id_usuario);
+
+                return $consulta->execute();
+            }
+        } catch (PDOException $e) {
+            return false;
         }
     }
 
@@ -90,6 +132,19 @@ class UsuarioModel
         $consulta->bindParam(1, $this->id_usuario);
         $consulta->execute();
     }
+
+    public function verificarLogin($nombre_usuario, $contraseña)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE nombre_usuario = ?");
+        $stmt->execute([$nombre_usuario]);
+        $usuario = $stmt->fetch();
+
+        if ($usuario && password_verify($contraseña, $usuario['contraseña'])) {
+            return $usuario;
+        } else {
+            return false;
+        }
+    }
 }
 
 
@@ -98,18 +153,5 @@ class UsuarioModel
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$nombre_usuario, $nombre, $email, $contraseña_hash]);
     }
-
-    public function verificarLogin($nombre_usuario, $contraseña) {
-    $stmt = $this->db->prepare("SELECT * FROM usuario WHERE nombre_usuario = ?");
-    $stmt->execute([$nombre_usuario]);
-    $usuario = $stmt->fetch();
-
-    if ($usuario && password_verify($contraseña, $usuario['contraseña'])) {
-        return $usuario;
-    } else {
-        return false;
-    }
-}
-
 }
 ?>*/
