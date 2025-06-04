@@ -69,7 +69,6 @@ class UserController
 
     public function logout()
     {
-        require_once 'libs/auth.php';
         session_start();
         session_unset();
         session_destroy();
