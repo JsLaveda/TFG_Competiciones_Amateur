@@ -35,7 +35,7 @@ class UserController
             $ok = $usuario->save();
 
             if ($ok) {
-                $mensaje = "Usuario registrado correctamente.";
+                $mensaje = "Usuario registrado correctamente.";//cambiar por posible header?
             } else {
                 $mensaje = "Error al registrar usuario.";
             }
