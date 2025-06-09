@@ -125,9 +125,15 @@ class UsuarioModel
         }
     }
 
-    //Añadir funcion que verifique si el nombre de suario y el correo están registrados
-    //Puedes cambiarle el nombre en el UserController al que tu quieras, cuando la terminas borra estos comentarios
-    //Y descomenta el if del UserController para que funcione
+    // Verificar si el usuario ya existe por nombre de usuario o correo electrónico
+    public function usuarioCorreoExistente($nombre_usuario, $email)
+    {
+        $consulta = $this->db->prepare('SELECT * FROM usuario WHERE nombre_usuario = ? OR email = ?');
+        $consulta->bindParam(1, $nombre_usuario);
+        $consulta->bindParam(2, $email);
+        $consulta->execute();
+        return $consulta->fetch() !== false; // Devuelve true si existe, false si no
+    }
 
     // Eliminar
     public function delete()

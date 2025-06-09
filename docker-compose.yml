@@ -4,7 +4,7 @@ services:
   app:
     build: .
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
       - .:/var/www/html
     depends_on:
@@ -16,10 +16,11 @@ services:
     environment:
       MYSQL_DATABASE: evaluacion
       MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    # 🔥 ¡IMPORTANTE! No expongas el puerto si no lo necesitas fuera del contenedor
+    # ports:
+    #   - "3306:3306"
 
 volumes:
   db_data:
