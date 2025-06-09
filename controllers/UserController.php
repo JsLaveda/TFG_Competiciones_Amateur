@@ -11,6 +11,8 @@ class UserController
 
     public function register()
     {
+        $vista = new View();
+        $mensaje = "";
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombre_usuario = $_POST['nombre_usuario'];
             $nombre = $_POST['nombre'];
@@ -20,7 +22,7 @@ class UserController
             $usuario = new UsuarioModel();
 
             if ($usuario->usuarioCorreoExistente($nombre_usuario, $email)) {
-                echo "Error: Correo o nombre de usuario ya registrado";
+                $mensaje = "Error: Correo o nombre de usuario ya registrado";
                 return;
             }
 
@@ -33,13 +35,13 @@ class UserController
             $ok = $usuario->save();
 
             if ($ok) {
-                echo "Usuario registrado correctamente."; //Cambiar por vista bonita
+                $mensaje = "Usuario registrado correctamente.";
             } else {
-                echo "Error al registrar usuario."; //Cambiar por vista bonita
+                $mensaje = "Error al registrar usuario.";
             }
         } else {
-            $vista = new View();
-            $vista->show("register.php"); //Cambiar?
+            
+            $vista->show("register.php", ["mensaje" => $mensaje]);
         }
     }
 
