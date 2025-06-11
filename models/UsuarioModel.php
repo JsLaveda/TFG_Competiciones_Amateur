@@ -156,6 +156,16 @@ class UsuarioModel
             return false;
         }
     }
+
+    // Obtener un usuario por nombre de usuario
+    public function getByNombreUsuario($nombre_usuario)
+    {
+        $consulta = $this->db->prepare('SELECT * FROM usuario WHERE nombre_usuario = ?');
+        $consulta->bindParam(1, $nombre_usuario);
+        $consulta->execute();
+        $consulta->setFetchMode(PDO::FETCH_CLASS, "UsuarioModel");
+        return $consulta->fetch();
+    }
 }
 
 
