@@ -14,6 +14,7 @@ class CompeticionModel
     private $privacidad;
     private $tipo_competicion;
     private $creador;
+    private $estado;
 
     public function __construct()
     {
@@ -41,6 +42,9 @@ class CompeticionModel
 
     public function getCreador() { return $this->creador; }
     public function setCreador($creador) { $this->creador = $creador; }
+
+    public function getEstado() { return $this->estado; }
+    public function setEstado($estado) { $this->estado = $estado; }
 
     // Obtener todas las competiciones
     public function getAll()
@@ -73,10 +77,10 @@ class CompeticionModel
     // Insertar o actualizar
     public function save()
     {
-        if (!isset($this->id_competicion)) {
+       if (!isset($this->id_competicion)) {
             $consulta = $this->db->prepare(
-                'INSERT INTO competicion (nombre, fecha_inicio, fecha_fin, privacidad, tipo_competicion, creador)
-                 VALUES (?, ?, ?, ?, ?, ?)'
+                'INSERT INTO competicion (nombre, fecha_inicio, fecha_fin, privacidad, tipo_competicion, creador, estado)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)'
             );
             $consulta->bindParam(1, $this->nombre);
             $consulta->bindParam(2, $this->fecha_inicio);
@@ -84,10 +88,11 @@ class CompeticionModel
             $consulta->bindParam(4, $this->privacidad);
             $consulta->bindParam(5, $this->tipo_competicion);
             $consulta->bindParam(6, $this->creador);
+            $consulta->bindParam(7, $this->estado);
             $consulta->execute();
         } else {
             $consulta = $this->db->prepare(
-                'UPDATE competicion SET nombre = ?, fecha_inicio = ?, fecha_fin = ?, privacidad = ?, tipo_competicion = ?, creador = ?
+                'UPDATE competicion SET nombre = ?, fecha_inicio = ?, fecha_fin = ?, privacidad = ?, tipo_competicion = ?, creador = ?, estado = ?
                  WHERE id_competicion = ?'
             );
             $consulta->bindParam(1, $this->nombre);
@@ -96,7 +101,8 @@ class CompeticionModel
             $consulta->bindParam(4, $this->privacidad);
             $consulta->bindParam(5, $this->tipo_competicion);
             $consulta->bindParam(6, $this->creador);
-            $consulta->bindParam(7, $this->id_competicion);
+            $consulta->bindParam(7, $this->estado);
+            $consulta->bindParam(8, $this->id_competicion);
             $consulta->execute();
         }
     }
@@ -182,4 +188,3 @@ class CompeticionModel
     }
 
 }
-
