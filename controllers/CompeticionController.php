@@ -11,50 +11,49 @@ class CompeticionController
         $vista->show("competicion.php");
     }
 
-    public function crearCompeticion() {}
-
-    public function clasificacion() //Sin terminar
+    public function crearCompeticion()
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nombre = $_POST['nombre'] ?? '';
+            $fecha_inicio = $_POST['fecha_inicio'] ?: date('Y-m-d');
+            $fecha_fin = $_POST['fecha_fin'] ?: date('Y-m-d', strtotime('+2 days'));
+            $privacidad = isset($_POST['privacidad']) ? 1 : 0;
+            $tipo_competicion = $_POST['tipo_competicion'] ?? 'futbol';
+            $creador = $_SESSION['usuario']['id']; 
+
+            $competicion = new CompeticionModel();
+            $competicion->setNombre($nombre);
+            $competicion->setFecha_inicio($fecha_inicio);
+            $competicion->setFecha_fin($fecha_fin);
+            $competicion->setPrivacidad($privacidad);
+            $competicion->setTipo_competicion($tipo_competicion);
+            $competicion->setCreador($creador);
+
+            $idCompeticion = $competicion->save();
+            
+            header("Location: index.php?controller=equipo&action=crear&competicion_id=" . $idCompeticion);
+            exit();
+        } else {
+
+            $vista = new View();
+            $vista->show('crearCompeticion.php');
+        }
+    }
+
+    public function clasificacion()
+    {
+        if (!isset($_GET['id'])) {
+            echo "Error: competicion no especificada";
+            return;
+        }
+
+        $id = intval($_GET['id']);
+
         $competicion = new CompeticionModel();
-        $equipos = $competicion->obtenerEquipos(); // Array de objetos EquipoModel
+        $competicion->setId_competicion(($id));
+        $clasificacion = $competicion->getClasificacion();
 
-
-        $clasificacion = [];
-
-        foreach ($equipos as $equipo) {
-            $id = $equipo->getId_equipo();
-            $clasificacion[$id] = ['nombre' => $equipo->getNombre(),'puntos' => 0 ];
-        }
-
-        // Procesar cada partido
-        foreach ($partidos as $partido) {
-            $idEq1 = $partido->getEquipo1();
-            $idEq2 = $partido->getEquipo2();
-            $p1 = $partido->getPuntuacion1();
-            $p2 = $partido->getPuntuacion2();
-
-            if (!isset($clasificacion[$idEq1]) || !isset($clasificacion[$idEq2])) {
-                // Evitar errores si algún equipo no está registrado
-                continue;
-            }
-
-            if ($p1 > $p2) {
-                $clasificacion[$idEq1]['puntos'] += 3;
-            } elseif ($p1 < $p2) {
-                $clasificacion[$idEq2]['puntos'] += 3;
-            } else {
-                $clasificacion[$idEq1]['puntos'] += 1;
-                $clasificacion[$idEq2]['puntos'] += 1;
-            }
-        }
-
-        // Ordenar por puntos descendentes
-        usort($clasificacion, function ($a, $b) {
-            return $b['puntos'] <=> $a['puntos'];
-        });
-
-        // Mostrar en vista
         $vista = new View();
-        $vista->show("clasificacion.php", ['clasificacion' => $clasificacion]);
+        $vista->show("", ['clasificacion' => $clasificacion, 'id_competicion' => $id]);
     }
 }
