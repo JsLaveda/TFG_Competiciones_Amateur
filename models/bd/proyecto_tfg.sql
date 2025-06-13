@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-06-2025 a las 16:33:23
+-- Tiempo de generación: 12-06-2025 a las 21:34:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -34,7 +34,8 @@ CREATE TABLE `competicion` (
   `fecha_fin` date NOT NULL,
   `privacidad` enum('Privada','Publica','','') NOT NULL,
   `tipo_competicion` int(11) NOT NULL,
-  `creador` int(11) NOT NULL
+  `creador` int(11) NOT NULL,
+  `estado` enum('pendiente','iniciada','finalizada') DEFAULT 'pendiente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -86,6 +87,14 @@ CREATE TABLE `tipo_competicion` (
   `id_tipo_competicion` int(11) NOT NULL,
   `nombre_competicion` varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tipo_competicion`
+--
+
+INSERT INTO `tipo_competicion` (`id_tipo_competicion`, `nombre_competicion`) VALUES
+(1, 'Futbol'),
+(2, 'Baloncesto');
 
 -- --------------------------------------------------------
 
@@ -182,13 +191,13 @@ ALTER TABLE `partido`
 -- AUTO_INCREMENT de la tabla `tipo_competicion`
 --
 ALTER TABLE `tipo_competicion`
-  MODIFY `id_tipo_competicion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_tipo_competicion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
