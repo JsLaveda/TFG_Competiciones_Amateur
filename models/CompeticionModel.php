@@ -90,6 +90,7 @@ class CompeticionModel
             $consulta->bindParam(6, $this->creador);
             $consulta->bindParam(7, $this->estado);
             $consulta->execute();
+            $this->id_competicion = $this->db->lastInsertId(); // Obtener el ID del último insert
         } else {
             $consulta = $this->db->prepare(
                 'UPDATE competicion SET nombre = ?, fecha_inicio = ?, fecha_fin = ?, privacidad = ?, tipo_competicion = ?, creador = ?, estado = ?
@@ -105,6 +106,7 @@ class CompeticionModel
             $consulta->bindParam(8, $this->id_competicion);
             $consulta->execute();
         }
+        return $this->id_competicion; // Devuelve el ID de la competición
     }
 
     // Eliminar

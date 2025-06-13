@@ -89,4 +89,14 @@ class EquipoModel
         $consulta->bindParam(1, $this->id_equipo);
         $consulta->execute();
     }
+
+    // Obtener numero de equipos en una competición
+    public function contarEquiposPorCompeticion($id_competicion)
+{
+    $consulta = $this->db->prepare('SELECT COUNT(*) FROM equipo WHERE id_competicion = ?');
+    $consulta->bindParam(1, $id_competicion, PDO::PARAM_INT);
+    $consulta->execute();
+    return (int) $consulta->fetchColumn();
+}
+
 }
