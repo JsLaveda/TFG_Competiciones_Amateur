@@ -1,10 +1,11 @@
 FROM php:7.4-apache
 
-# Instala extensiones necesarias
-RUN docker-php-ext-install mysqli
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Copia tus archivos al contenedor
+RUN a2enmod rewrite
+
 COPY . /var/www/html/
 
-# Habilita el módulo de reescritura
-RUN a2enmod rewrite
+RUN chown -R www-data:www-data /var/www/html
+
+WORKDIR /var/www/html

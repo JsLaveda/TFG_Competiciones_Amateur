@@ -10,43 +10,55 @@ class UserController
     }
 
     public function register()
-    {
-        $vista = new View();
-        $mensaje = "";
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre_usuario = $_POST['nombre_usuario'];
-            $nombre = $_POST['nombre'];
-            $email = $_POST['email'];
-            $contraseña = $_POST['contraseña'];
+{
+    $vista = new View();
+    $mensaje = "";
 
-            $usuario = new UsuarioModel();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nombre_usuario = $_POST['nombre_usuario'];
+        $nombre = $_POST['nombre'];
+        $email = $_POST['email'];
+        $contraseña = $_POST['contraseña'];
 
-            if ($usuario->usuarioCorreoExistente($nombre_usuario, $email)) {
-                $mensaje = "Error: Correo o nombre de usuario ya registrado";
-                return;
-            }
+        $usuario = new UsuarioModel();
 
-            $contraseña_hash = password_hash($contraseña, PASSWORD_BCRYPT);
-
-            $usuario->setNombre_usuario($nombre_usuario);
-            $usuario->setNombre($nombre);
-            $usuario->setEmail($email);
-            $usuario->setContraseña($contraseña_hash);
-            $ok = $usuario->save();
-
-            if ($ok) {
-                $mensaje = "Usuario registrado correctamente.";//cambiar por posible header?
-            } else {
-                $mensaje = "Error al registrar usuario.";
-            }
-        } else {
-            
+        if ($usuario->usuarioCorreoExistente($nombre_usuario, $email)) {
+            $mensaje = "Error: Correo o nombre de usuario ya registrado.";
             $vista->show("register.php", ["mensaje" => $mensaje]);
+            return;
         }
+
+        $contraseña_hash = password_hash($contraseña, PASSWORD_BCRYPT);
+
+        $usuario->setNombre_usuario($nombre_usuario);
+        $usuario->setNombre($nombre);
+        $usuario->setEmail($email);
+        $usuario->setContraseña($contraseña_hash);
+        $ok = $usuario->save();
+
+        if ($ok) {
+            session_start();
+            $_SESSION['usuario'] = [
+                'nombre_usuario' => $nombre_usuario,
+                'nombre' => $nombre,
+                'email' => $email
+            ];
+            header('Location: dashboard.php');
+            exit();
+        } else {
+            $mensaje = "Error al registrar usuario.";
+            $vista->show("register.php", ["mensaje" => $mensaje]);
+            return;
+        }
+    } else {
+        $vista->show("register.php", ["mensaje" => $mensaje]);
     }
+}
 
     public function login()
     {
+        $vista = new View();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombre_usuario = $_POST['nombre_usuario'];
             $contraseña = $_POST['contraseña'];
@@ -57,14 +69,16 @@ class UserController
             if ($usuario) {
                 session_start();
                 $_SESSION['usuario'] = $usuario;
-                echo "Sesión iniciada correctamente. Bienvenido, " . $usuario['nombre'];
-                // También podrías redirigir:
-                // header('Location: index.php');
+
+                // Redirige a página principal o dashboard
+                header('Location: index.php'); 
+                exit();
             } else {
-                echo "Nombre de usuario o contraseña incorrectos.";
+                $mensaje = "Nombre de usuario o contraseña incorrectos.";
+                $vista->show("login.php", ["mensaje" => $mensaje]);
+                return;
             }
         } else {
-            $vista = new View();
             $vista->show("login.php");
         }
     }
@@ -75,8 +89,7 @@ class UserController
         session_unset();
         session_destroy();
 
-
-        // header('Location: index.php?controller=User&action=login');
+        header('Location: /TFG_Competiciones_Amateur/');
         exit();
     }
 }
