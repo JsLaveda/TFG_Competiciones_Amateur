@@ -84,7 +84,7 @@ class CompeticionController
 
         // comprobar equipos
         $equipoModel = new EquipoModel();
-        $cantidadEquipos = $equipoModel->cantidadEquipos($idCompeticion); //cambiar nombre funcion
+        $cantidadEquipos = $equipoModel->contarEquiposPorCompeticion($idCompeticion); 
 
         if ($esCreador) {
             if ($cantidadEquipos < 2) {

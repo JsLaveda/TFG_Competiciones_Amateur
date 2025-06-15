@@ -43,7 +43,7 @@ class UserController
                 'nombre' => $nombre,
                 'email' => $email
             ];
-            header('Location: dashboard.php');
+            header('Location: login.php');
             exit();
         } else {
             $mensaje = "Error al registrar usuario.";
@@ -71,7 +71,7 @@ class UserController
                 $_SESSION['usuario'] = $usuario;
 
                 // Redirige a página principal o dashboard
-                header('Location: index.php'); 
+                header('Location: dashboard.php'); 
                 exit();
             } else {
                 $mensaje = "Nombre de usuario o contraseña incorrectos.";
@@ -89,7 +89,7 @@ class UserController
         session_unset();
         session_destroy();
 
-        header('Location: /TFG_Competiciones_Amateur/');
+        header('Location: index.php');
         exit();
     }
 }
