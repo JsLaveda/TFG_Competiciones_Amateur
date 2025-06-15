@@ -36,7 +36,7 @@ class CompeticionController
         }
     }
 
-    
+
 
     public function clasificacion()
     {
@@ -58,16 +58,44 @@ class CompeticionController
     public function inicioCompeticion()
     {
 
+        $id = intval($_GET['id']);
+
+        $competicion = new CompeticionModel();
+        $competicion->setId_competicion($id);
+
+        // Iniciar competición (cambia estado y fecha, y genera los partidos)
+        $competicion->iniciarCompeticion();
+
+        header("Location: index.php?controller=competicion&action=verCompeticion&id=$id");
+        exit();
     }
 
     public function finCompeticion()
     {
+        $id = intval($_GET['id']);
 
+        $competicion = new CompeticionModel();
+        $competicion->setId_competicion($id);
+
+        // Finalizar la competición (cambiar estado y fecha)
+        $competicion->finalizarCompeticion();
+
+        header("Location: index.php?controller=competicion&action=verCompeticion&id=$id");
+        exit();
     }
 
     public function borrarCompeticion()
     {
-        
+        $id = intval($_GET['id']);
+
+        $competicion = new CompeticionModel();
+        $competicion->setId_competicion($id);
+
+        // Eliminar competición y dependencias
+        $competicion->delete();
+
+        header("Location: index.php?controller=competicion&action=index");
+        exit();
     }
 
 
@@ -95,7 +123,7 @@ class CompeticionController
 
         // comprobar equipos
         $equipoModel = new EquipoModel();
-        $cantidadEquipos = $equipoModel->contarEquiposPorCompeticion($idCompeticion); 
+        $cantidadEquipos = $equipoModel->contarEquiposPorCompeticion($idCompeticion);
 
         if ($esCreador) {
             if ($cantidadEquipos < 2) {

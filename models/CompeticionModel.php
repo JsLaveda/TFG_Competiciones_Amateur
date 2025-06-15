@@ -22,29 +22,77 @@ class CompeticionModel
     }
 
     // Getters y setters
-    public function getId_competicion() { return $this->id_competicion; }
-    public function setId_competicion($id) { $this->id_competicion = $id; }
+    public function getId_competicion()
+    {
+        return $this->id_competicion;
+    }
+    public function setId_competicion($id)
+    {
+        $this->id_competicion = $id;
+    }
 
-    public function getNombre() { return $this->nombre; }
-    public function setNombre($nombre) { $this->nombre = $nombre; }
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+    }
 
-    public function getFecha_inicio() { return $this->fecha_inicio; }
-    public function setFecha_inicio($fecha_inicio) { $this->fecha_inicio = $fecha_inicio; }
+    public function getFecha_inicio()
+    {
+        return $this->fecha_inicio;
+    }
+    public function setFecha_inicio($fecha_inicio)
+    {
+        $this->fecha_inicio = $fecha_inicio;
+    }
 
-    public function getFecha_fin() { return $this->fecha_fin; }
-    public function setFecha_fin($fecha_fin) { $this->fecha_fin = $fecha_fin; }
+    public function getFecha_fin()
+    {
+        return $this->fecha_fin;
+    }
+    public function setFecha_fin($fecha_fin)
+    {
+        $this->fecha_fin = $fecha_fin;
+    }
 
-    public function getPrivacidad() { return $this->privacidad; }
-    public function setPrivacidad($privacidad) { $this->privacidad = $privacidad; }
+    public function getPrivacidad()
+    {
+        return $this->privacidad;
+    }
+    public function setPrivacidad($privacidad)
+    {
+        $this->privacidad = $privacidad;
+    }
 
-    public function getTipo_competicion() { return $this->tipo_competicion; }
-    public function setTipo_competicion($tipo_competicion) { $this->tipo_competicion = $tipo_competicion; }
+    public function getTipo_competicion()
+    {
+        return $this->tipo_competicion;
+    }
+    public function setTipo_competicion($tipo_competicion)
+    {
+        $this->tipo_competicion = $tipo_competicion;
+    }
 
-    public function getCreador() { return $this->creador; }
-    public function setCreador($creador) { $this->creador = $creador; }
+    public function getCreador()
+    {
+        return $this->creador;
+    }
+    public function setCreador($creador)
+    {
+        $this->creador = $creador;
+    }
 
-    public function getEstado() { return $this->estado; }
-    public function setEstado($estado) { $this->estado = $estado; }
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+    public function setEstado($estado)
+    {
+        $this->estado = $estado;
+    }
 
     // Obtener todas las competiciones
     public function getAll()
@@ -77,7 +125,7 @@ class CompeticionModel
     // Insertar o actualizar
     public function save()
     {
-       if (!isset($this->id_competicion)) {
+        if (!isset($this->id_competicion)) {
             $consulta = $this->db->prepare(
                 'INSERT INTO competicion (nombre, fecha_inicio, fecha_fin, privacidad, tipo_competicion, creador, estado)
                  VALUES (?, ?, ?, ?, ?, ?, ?)'
@@ -182,11 +230,72 @@ class CompeticionModel
         }
 
         // Ordenar por puntos
-        usort($clasificacion, function($a, $b) {
+        usort($clasificacion, function ($a, $b) {
             return $b['puntos'] - $a['puntos'];
         });
 
         return $clasificacion;
     }
 
+
+    /*
+     private function generarCalendario()
+{
+    // Obtener equipos
+    $consulta = $this->db->prepare('SELECT id_equipo FROM equipo WHERE id_competicion = ?');
+    $consulta->bindParam(1, $this->id_competicion);
+    $consulta->execute();
+    $equipos = $consulta->fetchAll(PDO::FETCH_COLUMN);
+
+    $numEquipos = count($equipos);
+
+    // Si impar, hacemos que el haya un espacio pero su valor es null
+    $esImpar = $numEquipos % 2 !== 0;
+    if ($esImpar) {
+        $equipos[] = null; // equipo fantasma
+        $numEquipos++;
+    }
+
+    $jornadas = $numEquipos - 1;
+    $mitad = $numEquipos / 2;
+
+    $rondas = [];
+
+    for ($j = 0; $j < $jornadas; $j++) {
+        $ronda = [];
+        for ($i = 0; $i < $mitad; $i++) {
+            $e1 = $equipos[$i];
+            $e2 = $equipos[$numEquipos - 1 - $i];
+
+            if ($e1 !== null && $e2 !== null) {
+                $ronda[] = [$e1, $e2];
+            }
+        }
+
+        $rondas[] = $ronda;
+
+        // Rotación de equipos
+        $temp = array_splice($equipos, 1, 1)[0];
+        array_splice($equipos, -1, 0, [$temp]);
+    }
+
+    // Crear jornadas y partidos
+    foreach ($rondas as $i => $ronda) {
+        $jornada = new JornadaModel();
+        $jornada->setFecha_jornada(date('Y-m-d', strtotime("+{$i} weeks")));
+        $jornada->setId_competicion($this->id_competicion);
+        $jornada->save();
+
+        foreach ($ronda as [$local, $visitante]) {
+            $partido = new PartidoModel();
+            $partido->setEquipo1($local);
+            $partido->setEquipo2($visitante);
+            $partido->setId_jornada($jornada->getId_jornada());
+            $partido->save();
+        }
+    }
+}
+
+
+    */
 }
