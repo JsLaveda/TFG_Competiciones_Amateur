@@ -6,6 +6,21 @@ class EquipoController
 {
     public function crearEquipo()
     {
+
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Cache navegador
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: index.php?controller=usuario&action=login');
+            exit();
+        }
+
         $vista = new View();
 
         // Mostrar formulario
@@ -33,7 +48,7 @@ class EquipoController
 
             $equipo = new EquipoModel();
             $equipo->setNombre($nombre);
-            $equipo->setId_competicion($id_competicion);
+            $equipo->setId_competicion($id_competicion); //Añadir mensaje equipop añadido corrrectamente
             $equipo->save();
 
             // Redirigir al mismo formulario para seguir creando
@@ -44,6 +59,16 @@ class EquipoController
 
     public function verEquipo()
     {
+
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Evitar caché
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+
         $equipoModel = new EquipoModel();
         $obtenerEquipos = $equipoModel->getEquiposYJugadores();
 

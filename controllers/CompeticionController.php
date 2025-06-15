@@ -13,6 +13,21 @@ class CompeticionController
 
     public function crearCompeticion()
     {
+
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Evitar cache 
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: index.php?controller=usuario&action=login');
+            exit();
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombre = $_POST['nombre'] ?? '';
             $privacidad = isset($_POST['privacidad']) ? 1 : 0;
@@ -100,8 +115,18 @@ class CompeticionController
 
 
 
-    public function verCompeticion()
+    public function verCompeticion() //Hay que modificarla añadiendo el parametro del estado de la competicion
     {
+
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        //No acceso despues de caché
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+
         //id vacio o no se lo das
         $idCompeticion = $_GET['id'] ?? null;
         if (!$idCompeticion) {
