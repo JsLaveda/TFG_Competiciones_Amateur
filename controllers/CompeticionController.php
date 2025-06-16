@@ -59,12 +59,24 @@ class CompeticionController
             echo "Error: competicion no especificada"; //Cambiar por competicion no encontrada
             return;
         }
-
+        //Obtener datos de la competicion
         $id = intval($_GET['id']);
-
-        $competicion = new CompeticionModel();
-        $competicion->setId_competicion(($id));
-        $clasificacion = $competicion->getClasificacion();
+        $competicionModel = new CompeticionModel();
+        $competicion = $competicionModel->getById($id);
+        //comprobar si la encuentra
+        if (!$competicion) {
+            header('Location: index.php?controller=competicion&action=index');
+            exit();
+        }
+        //Si el estado está pendiente, mostrar pantalla de espera
+        if ($competicion['estado'] === 'pendiente') {
+            $vista = new View();
+            $vista->show('competicionEnCreacion.php', ['competicion' => $competicion]);
+            return;
+        }
+        //Obtener la classificacion
+        $competicionModel->setId_competicion($id);
+        $clasificacion = $competicionModel->getClasificacion();
 
         $vista = new View();
         $vista->show("", ['clasificacion' => $clasificacion, 'id_competicion' => $id]); //mostrar vista con clasificacion
@@ -134,40 +146,54 @@ class CompeticionController
             exit();
         }
 
-        // competicion no existe en base de datos
+        //Obtener la competicion
         $competicionModel = new CompeticionModel();
         $competicion = $competicionModel->getById($idCompeticion);
+        // competicion no existe en base de datos
         if (!$competicion) {
             header('Location: index.php?controller=competicion&action=index');
             exit();
         }
 
-        // comprobar usuario
+        // comprobar usuario es creador
         $usuarioActual = $_SESSION['usuario'];
         $esCreador = ($usuarioActual['id'] == $competicion['creador']);
 
-        // comprobar equipos
+        // comprobar si hay equipos
         $equipoModel = new EquipoModel();
         $cantidadEquipos = $equipoModel->contarEquiposPorCompeticion($idCompeticion);
 
+        //comprobar estado competicion
+        $estadoCompeticion = $competicion['estado'];
+
         if ($esCreador) {
+            //es creador pero no hay suficientes equipos creados
             if ($cantidadEquipos < 2) {
                 header("Location: index.php?controller=equipo&action=crear&competicion_id=$idCompeticion"); //mostrar creador equipos de esa competicion
                 exit();
             } else {
+                //es creador y hay suficientes equipos creados
                 $vista = new View();
                 $vista->show('competicionCreador.php', [ //mostrar vista creador competicion
-                    'competicion' => $competicion
+                    'competicion' => $competicion,
+                    'estado' => $estadoCompeticion
                 ]);
             }
         } else {
+            //Si no es creador
             if ($cantidadEquipos < 2) {
+                //no es creador y no hay suficientes equipos
                 $vista = new View();
-                $vista->show('competicionEnCreacion.php', ['competicion' => $competicion]); //mostrar vista competicion sin terminar
+                $vista->show('competicionEnCreacion.php', [
+                    'competicion' => $competicion,
+                    'estado' => $estadoCompeticion
+                ]); //mostrar vista competicion sin terminar
             } else {
+                //vista informacion usuarios
                 $vista = new View();
                 $vista->show('competicionUsuario.php', [ //mostrar vista competicion terminada
-                    'competicion' => $competicion
+                    'competicion' => $competicion,
+                    'estado' => $estadoCompeticion
                 ]);
             }
         }
