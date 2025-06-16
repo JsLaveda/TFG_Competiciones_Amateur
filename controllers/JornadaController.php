@@ -1,6 +1,7 @@
 <?php
 
 require_once 'model/JornadaModel.php';
+require_once 'model/PartidoModel.php';
 
 class JornadaController
 {
@@ -18,18 +19,36 @@ class JornadaController
 
         $id_competicion = intval($_GET['id']);
 
+
+        $competicionModel = new CompeticionModel();
+        $competicion = $competicionModel->getById($id_competicion);
+
+        if (!$competicion) {
+            header('Location: index.php?controller=competicion&action=index');
+            exit();
+        }
+
+        if ($competicion['estado'] === 'pendiente') {
+            $vista = new View();
+            $vista->show('competicionEnCreacion.php', ['competicion' => $competicion]);
+            return;
+        }
+
         $jornadaModel = new JornadaModel();
-        $jornadas = $jornadaModel->getJornadasCompeticion($id_competicion);
+        $jornadas = $jornadaModel->getJornadasByCompeticion($id_competicion);
 
         $partidoModel = new PartidoModel();
-
         $jornadas_con_partidos = [];
 
         foreach ($jornadas as $jornada) {
-            $partidos = $partidoModel->getPartidosJornada($jornada['id_jornada']);
+            $partidos = $partidoModel->getPartidosByJornada($jornada['id_jornada']);
             $jornada['partidos'] = $partidos;
             $jornadas_con_partidos[] = $jornada;
         }
-        require_once 'views/jornadas/listar.php';
+        $vista = new View();
+        $vista->show('jornadas/listar.php', [
+            'jornadas' => $jornadas_con_partidos,
+            'competicion' => $competicion
+        ]);
     }
 }

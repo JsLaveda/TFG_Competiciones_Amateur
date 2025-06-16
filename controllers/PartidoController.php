@@ -1,6 +1,7 @@
 <?php
 
 require_once 'model/PartidoModel.php';
+require_once 'model/CompeticionModel.php';
 
 class PartidoController
 {
@@ -16,11 +17,25 @@ class PartidoController
         header("Pragma: no-cache");
 
         $id_partido = intval($_GET['id']);
-
         $partidoModel = new PartidoModel();
-        $partido = $partidoModel->getPartido($id_partido);
+        $partido = $partidoModel->getById($id_partido);
 
-        require_once 'views/partidos/ver.php';
+        $competicionModel = new CompeticionModel();
+        $competicion = $competicionModel->getCompeticionByPartidoId($id_partido);
+
+        $estado = $competicion['estado'];
+        $id_creador = $competicion['creador'];
+        $usuario_actual = $_SESSION['usuario']['id'];
+
+        $esCreador = ($usuario_actual == $id_creador);
+
+        if ($esCreador && $estado !== 'finalizada') {
+            $vista = new View();
+            $vista->show('partidos/editarCreador.php', ['partido' => $partido]);
+        } else {
+            $vista = new View();
+            $vista->show('partidos/ver.php', ['partido' => $partido]);
+        }
     }
 
 
@@ -38,7 +53,7 @@ class PartidoController
         $id_partido = intval($_GET['id']);
 
         $partidoModel = new PartidoModel();
-        $partido = $partidoModel->getPartido($id_partido);
+        $partido = $partidoModel->getById($id_partido);
 
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
@@ -49,9 +64,9 @@ class PartidoController
             $partidoModel->updatePuntuacion2($id_partido, $puntuacion2);
 
             $id_jornada = $partido['id_jornada'];
-            $id_competicion = $partidoModel->getIdCompeticionPorJornada($id_jornada);
+            $id_competicion = $partidoModel->getIdCompeticionByJornada($id_jornada);
 
-            
+
             header("Location: index.php?controller=jornada&action=verJornadas&id=$id_competicion");
             exit;
         }

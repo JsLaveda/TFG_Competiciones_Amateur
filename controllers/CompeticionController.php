@@ -82,6 +82,8 @@ class CompeticionController
         $vista->show("", ['clasificacion' => $clasificacion, 'id_competicion' => $id]); //mostrar vista con clasificacion
     }
 
+
+
     public function inicioCompeticion()
     {
 
