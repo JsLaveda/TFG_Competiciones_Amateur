@@ -93,7 +93,7 @@ class CompeticionController
         $competicion->setId_competicion($id);
 
         // Iniciar competición (cambia estado y fecha, y genera los partidos)
-        $competicion->iniciarCompeticion();
+        $competicion->cambiarEstado('iniciada');
 
         header("Location: index.php?controller=competicion&action=verCompeticion&id=$id");
         exit();
@@ -107,7 +107,7 @@ class CompeticionController
         $competicion->setId_competicion($id);
 
         // Finalizar la competición (cambiar estado y fecha)
-        $competicion->finalizarCompeticion();
+        $competicion->cambiarEstado('finalizada');
 
         header("Location: index.php?controller=competicion&action=verCompeticion&id=$id");
         exit();
@@ -199,5 +199,22 @@ class CompeticionController
                 ]);
             }
         }
+    }
+
+    public function buscarCompeticion() {
+        $datoIntroducido = $_GET['datoIntroducido'] ?? '';
+        $competicion = new CompeticionModel();
+
+        if (is_numeric($datoIntroducido)) {
+            $resultado = $competicion->getById($datoIntroducido);
+            $resultados = $resultado ? [$resultado] : [];
+        } else {
+            $resultados = $competicion->getByName($datoIntroducido);
+        }
+
+        $vista = new View();
+        $vista->show('resultadosBusqueda.php',
+        ['resultados' => $resultados,
+         'datoIntroducido' => $datoIntroducido]);
     }
 }
