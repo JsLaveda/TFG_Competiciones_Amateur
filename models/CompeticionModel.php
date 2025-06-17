@@ -237,8 +237,59 @@ class CompeticionModel
         return $clasificacion;
     }
 
+public function cambiarEstado($nuevo_estado)
+{
+    // Asignar fecha actual
+    $fecha_actual = date('Y-m-d');
 
-    /*
+    // Lógica para saber si hay que actualizar fecha_inicio o fecha_fin
+    if ($nuevo_estado === 'iniciada') {
+        $consulta = $this->db->prepare('
+            UPDATE competicion 
+            SET estado = ?, fecha_inicio = ? 
+            WHERE id_competicion = ?
+        ');
+        $consulta->bindParam(1, $nuevo_estado);
+        $consulta->bindParam(2, $fecha_actual);
+        $consulta->bindParam(3, $this->id_competicion);
+    } 
+
+    elseif ($nuevo_estado === 'finalizada') {
+        $consulta = $this->db->prepare('
+            UPDATE competicion 
+            SET estado = ?, fecha_fin = ? 
+            WHERE id_competicion = ?
+        ');
+        $consulta->bindParam(1, $nuevo_estado);
+        $consulta->bindParam(2, $fecha_actual);
+        $consulta->bindParam(3, $this->id_competicion);
+    } 
+    
+    else {
+        $consulta = $this->db->prepare('
+            UPDATE competicion 
+            SET estado = ? 
+            WHERE id_competicion = ?
+        ');
+        $consulta->bindParam(1, $nuevo_estado);
+        $consulta->bindParam(2, $this->id_competicion);
+    }
+
+    // Guardar el resultado
+    $resultado = $consulta->execute();
+
+    // Generar calendario si estado es 'iniciada'
+    if ($resultado && $nuevo_estado === 'iniciada') {
+        $this->generarCalendario();
+    }
+
+    // Devolver el resultado
+    return $resultado;
+}
+
+
+    
+
      private function generarCalendario()
 {
     // Obtener equipos
@@ -296,6 +347,4 @@ class CompeticionModel
     }
 }
 
-
-    */
 }
