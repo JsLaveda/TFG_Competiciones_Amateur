@@ -126,7 +126,7 @@ class CompeticionModel
     // Esta función devuelve 10 competiciones aleatorias de la base de datos.
     public function getCompeticionesRandom()
     {
-        $consulta = $this->db->query('SELECT * FROM competicion ORDER BY RAND() LIMIT 10');
+        $consulta = $this->db->query('SELECT * FROM competicion where privacidad = "Publica" ORDER BY RAND() LIMIT 10');
         return $consulta->fetchAll(PDO::FETCH_CLASS, "CompeticionModel");
     }
 
