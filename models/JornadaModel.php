@@ -44,6 +44,15 @@ class JornadaModel
         return $consulta->fetch();
     }
 
+    // Obtener jornadas por competición
+    public function getJornadasByCompeticion($id_competicion)
+{
+    $consulta = $this->db->prepare('SELECT * FROM jornada WHERE id_competicion = ? ORDER BY fecha_jornada ASC');
+    $consulta->bindParam(1, $id_competicion);
+    $consulta->execute();
+    return $consulta->fetchAll(PDO::FETCH_CLASS, "JornadaModel");
+}
+
     // Guardar o actualizar
     public function save()
     {

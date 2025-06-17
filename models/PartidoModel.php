@@ -55,6 +55,44 @@ class PartidoModel
         $consulta->setFetchMode(PDO::FETCH_CLASS, "PartidoModel");
         return $consulta->fetch();
     }
+    // Obtener competición por jornada
+    public function getIdCompeticionByJornada($id_jornada)
+    {
+        $consulta = $this->db->prepare('
+            SELECT id_competicion 
+            FROM jornada 
+            WHERE id_jornada = ?');
+        $consulta->bindParam(1, $id_jornada);
+        $consulta->execute();
+        return $consulta->fetchColumn();
+    }
+
+    // Actualizar puntuacion1
+    public function updatePuntuacion1($id_partido, $puntuacion1)
+    {
+        $consulta = $this->db->prepare('UPDATE partido SET puntuacion1 = ? WHERE id_partido = ?');
+        $consulta->bindParam(1, $puntuacion1);
+        $consulta->bindParam(2, $id_partido);
+        $consulta->execute();
+    }
+
+    // Actualizar puntuacion2
+    public function updatePuntuacion2($id_partido, $puntuacion2)
+    {
+        $consulta = $this->db->prepare('UPDATE partido SET puntuacion2 = ? WHERE id_partido = ?');
+        $consulta->bindParam(1, $puntuacion2);
+        $consulta->bindParam(2, $id_partido);
+        $consulta->execute();
+    }
+
+    // Obtener partidos por jornada
+    public function getPartidosByJornada($id_jornada)
+    {
+        $consulta = $this->db->prepare('SELECT * FROM partido WHERE id_jornada = ?');
+        $consulta->bindParam(1, $id_jornada);
+        $consulta->execute();
+        return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // Guardar o actualizar
     public function save()

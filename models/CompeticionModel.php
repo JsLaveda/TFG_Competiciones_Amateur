@@ -115,11 +115,35 @@ class CompeticionModel
     // Obtener competiciones por nombre
     public function getByName($nombre)
     {
-        $consulta = $this->db->prepare('SELECT * FROM competicion WHERE nombre LIKE ?');
+        $consulta = $this->db->prepare('SELECT * FROM competicion WHERE nombre LIKE ? and privacidad = "Publica"');
         $nombre = '%' . $nombre . '%';
         $consulta->bindParam(1, $nombre);
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "CompeticionModel");
+    }
+
+    // Obtener competiciones aleatorias
+    // Esta función devuelve 10 competiciones aleatorias de la base de datos.
+    public function getCompeticionesRandom()
+    {
+        $consulta = $this->db->query('SELECT * FROM competicion ORDER BY RAND() LIMIT 10');
+        return $consulta->fetchAll(PDO::FETCH_CLASS, "CompeticionModel");
+    }
+
+    // Obtener competición por ID de partido
+    public function getCompeticionByPartidoId($id_partido)
+    {
+        $consulta = $this->db->prepare('
+            SELECT c.*
+            FROM competicion c
+            JOIN jornada j ON c.id_competicion = j.id_competicion
+            JOIN partido p ON p.id_jornada = j.id_jornada
+            WHERE p.id_partido = ?');
+
+        $consulta->bindParam(1, $id_partido);
+        $consulta->execute();
+        $consulta->setFetchMode(PDO::FETCH_CLASS, "CompeticionModel");
+        return $consulta->fetch();
     }
 
     // Insertar o actualizar
@@ -242,7 +266,7 @@ public function cambiarEstado($nuevo_estado)
     // Asignar fecha actual
     $fecha_actual = date('Y-m-d');
 
-    // Lógica para saber si hay que actualizar fecha_inicio o fecha_fin
+    // Comprobación para saber si hay que actualizar fecha_inicio o fecha_fin
     if ($nuevo_estado === 'iniciada') {
         $consulta = $this->db->prepare('
             UPDATE competicion 
