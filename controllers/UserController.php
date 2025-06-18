@@ -37,9 +37,9 @@ class UserController
             $usuario->setContraseña($contraseña_hash);
             $ok = $usuario->save();
 
-            if ($ok) {
-                header('Location: login.php');
-                exit();
+           if ($ok) {
+    $vista->show("register_success.php", ["nombre" => $nombre]);
+    return;
             } else {
                 $mensaje = "Error al registrar usuario.";
                 $vista->show("register.php", ["mensaje" => $mensaje]);
@@ -51,59 +51,58 @@ class UserController
     }
 
     public function login()
-    {
-        $vista = new View();
+{
+    $vista = new View();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre_usuario = $_POST['nombre_usuario'];
-            $contraseña = $_POST['contraseña'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nombre_usuario = $_POST['nombre_usuario'];
+        $contraseña = $_POST['contraseña'];
 
-            $usuarioLogin = new UsuarioModel();
-            $usuario = $usuarioLogin->verificarLogin($nombre_usuario, $contraseña);
+        $usuarioLogin = new UsuarioModel();
+        $usuario = $usuarioLogin->verificarLogin($nombre_usuario, $contraseña);
 
-            if ($usuario) {
-                session_start();
-                $_SESSION['usuario'] = $usuario;
+        if ($usuario) {
+            session_start();
+            $_SESSION['usuario'] = $usuario;
 
-                // Redirige a página principal o dashboard
-                header('Location: index.php?controller=usuario&action=dashboard');
-                exit();
-            } else {
-                $mensaje = "Nombre de usuario o contraseña incorrectos.";
-                $vista->show("login.php", ["mensaje" => $mensaje]);
-                return;
-            }
+            // Redirige al controlador que carga la vista correctamente
+            header('Location: index.php?controlador=User&accion=mostrarPaginaPrincipal');
+            exit();
         } else {
-            $vista->show("login.php");
+            $mensaje = "Nombre de usuario o contraseña incorrectos.";
+            $vista->show("login.php", ["mensaje" => $mensaje]);
+            return;
         }
+    } else {
+        $vista->show("login.php");
     }
+}
+
 
     public function mostrarPaginaPrincipal()
-    {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['usuario'])) {
-            header('Location: index.php?controller=usuario&action=login');
-            exit();
-        }
-
-        //Acceso despues de caché
-        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-        header("Cache-Control: post-check=0, pre-check=0", false);
-        header("Pragma: no-cache");
-
-        $usuario = $_SESSION['usuario'];
-        $competicionModel = new CompeticionModel();
-        $competiciones = $competicionModel->getCompeticionesRandom(10);
-
-        $vista = new View();
-        $vista->show("dashboard.php", [
-            'usuario' => $usuario,
-            'competiciones' => $competiciones
-        ]);
+{
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
     }
+
+    if (!isset($_SESSION['usuario'])) {
+        header('Location: index.php?controlador=User&accion=login');
+        exit();
+    }
+
+    // Evitar caché
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+
+    $usuario = $_SESSION['usuario'];
+    $competicionModel = new CompeticionModel();
+    $competiciones = $competicionModel->getCompeticionesRandom(10);
+
+    // Esto carga directamente dashboard.php desde la raíz del proyecto
+    include 'dashboard.php';
+}
+
 
     public function logout()
     {

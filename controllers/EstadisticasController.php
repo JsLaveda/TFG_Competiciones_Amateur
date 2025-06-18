@@ -1,5 +1,5 @@
 <?php
-require_once 'models/Competicion.php';
+require_once 'models/CompeticionModel.php';
 
 class EstadisticasController {
     public function estadisticasFutbol() {
@@ -8,7 +8,7 @@ class EstadisticasController {
     }
 
     public function verCompeticionesFutbol() {
-        $modelo = new Competicion();
+        $modelo = new CompeticionModel();
         $competiciones = $modelo->getCompeticionesFutbol();
 
         $vista = new View();

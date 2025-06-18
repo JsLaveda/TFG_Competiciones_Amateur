@@ -1,5 +1,5 @@
 <?php
-// model/EquipoModel.php
+// models/EquipoModel.php
 
 class EquipoModel
 {
@@ -90,13 +90,19 @@ class EquipoModel
         $consulta->execute();
     }
 
-    // Obtener numero de equipos en una competición
+    public function obtenerPorCompeticion($id_competicion)
+    {
+        $consulta = $this->db->prepare('SELECT * FROM equipo WHERE id_competicion = ?');
+        $consulta->execute([$id_competicion]);
+        return $consulta->fetchAll(PDO::FETCH_CLASS, "EquipoModel");
+    }
+
     public function contarEquiposPorCompeticion($id_competicion)
-{
-    $consulta = $this->db->prepare('SELECT COUNT(*) FROM equipo WHERE id_competicion = ?');
-    $consulta->bindParam(1, $id_competicion, PDO::PARAM_INT);
-    $consulta->execute();
-    return (int) $consulta->fetchColumn();
-}
+    {
+        $consulta = $this->db->prepare("SELECT COUNT(*) as total FROM equipo WHERE id_competicion = ?");
+        $consulta->execute([$id_competicion]);
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+        return $resultado['total'] ?? 0;
+    }
 
 }

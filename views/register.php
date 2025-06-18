@@ -8,21 +8,26 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0d6efd, #6610f2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
 
-    .register-box {
-      background: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 450px;
-    }
+body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url('views/fotos/futbol2.avif');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3; /* Ajusta la opacidad aquí */
+  z-index: -1;
+}
+
   </style>
 </head>
 <body>

@@ -96,30 +96,35 @@ class PartidoModel
 
     // Guardar o actualizar
     public function save()
-    {
-        if (!isset($this->id_partido)) {
-            $consulta = $this->db->prepare(
-                'INSERT INTO partido (puntuacion1, puntuacion2, equipo1, equipo2, id_jornada) VALUES (?, ?, ?, ?, ?)'
-            );
-            $consulta->bindParam(1, $this->puntuacion1);
-            $consulta->bindParam(2, $this->puntuacion2);
-            $consulta->bindParam(3, $this->equipo1);
-            $consulta->bindParam(4, $this->equipo2);
-            $consulta->bindParam(5, $this->id_jornada);
-            $consulta->execute();
-        } else {
-            $consulta = $this->db->prepare(
-                'UPDATE partido SET puntuacion1 = ?, puntuacion2 = ?, equipo1 = ?, equipo2 = ?, id_jornada = ? WHERE id_partido = ?'
-            );
-            $consulta->bindParam(1, $this->puntuacion1);
-            $consulta->bindParam(2, $this->puntuacion2);
-            $consulta->bindParam(3, $this->equipo1);
-            $consulta->bindParam(4, $this->equipo2);
-            $consulta->bindParam(5, $this->id_jornada);
-            $consulta->bindParam(6, $this->id_partido);
-            $consulta->execute();
-        }
+{
+    if (empty($this->id_jornada)) {
+        throw new Exception("Error: El partido no tiene asignada una jornada (id_jornada).");
     }
+
+    if (!isset($this->id_partido)) {
+        $consulta = $this->db->prepare(
+            'INSERT INTO partido (puntuacion1, puntuacion2, equipo1, equipo2, id_jornada) VALUES (?, ?, ?, ?, ?)'
+        );
+        $consulta->bindParam(1, $this->puntuacion1);
+        $consulta->bindParam(2, $this->puntuacion2);
+        $consulta->bindParam(3, $this->equipo1);
+        $consulta->bindParam(4, $this->equipo2);
+        $consulta->bindParam(5, $this->id_jornada);
+        $consulta->execute();
+    } else {
+        $consulta = $this->db->prepare(
+            'UPDATE partido SET puntuacion1 = ?, puntuacion2 = ?, equipo1 = ?, equipo2 = ?, id_jornada = ? WHERE id_partido = ?'
+        );
+        $consulta->bindParam(1, $this->puntuacion1);
+        $consulta->bindParam(2, $this->puntuacion2);
+        $consulta->bindParam(3, $this->equipo1);
+        $consulta->bindParam(4, $this->equipo2);
+        $consulta->bindParam(5, $this->id_jornada);
+        $consulta->bindParam(6, $this->id_partido);
+        $consulta->execute();
+    }
+}
+
 
     // Eliminar
     public function delete()

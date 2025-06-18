@@ -8,21 +8,36 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      background: linear-gradient(135deg, #198754, #0dcaf0);
+      margin: 0;
       min-height: 100vh;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
       color: white;
     }
 
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('views/fotos/futbol2.avif') no-repeat center center fixed;
+      background-size: cover;
+      opacity: 0.5; /* Ajusta si quieres más/menos visibilidad */
+      z-index: -1;
+    }
+
     .success-box {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.3); /* Fondo semitransparente oscuro */
+      backdrop-filter: blur(6px);     /* Difumina lo que hay detrás */
       padding: 2.5rem;
       border-radius: 1rem;
       text-align: center;
       max-width: 500px;
       width: 100%;
+      position: relative;
+      z-index: 1;
     }
 
     .btn-group .btn {

@@ -1,6 +1,10 @@
 <?php
 // model/CompeticionModel.php
 
+require_once 'JornadaModel.php';
+require_once 'PartidoModel.php'; // ← También si usas PartidoModel dentro
+
+
 class CompeticionModel
 {
     // Conexión a la base de datos

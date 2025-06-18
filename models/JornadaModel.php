@@ -55,24 +55,22 @@ class JornadaModel
 
     // Guardar o actualizar
     public function save()
-    {
-        if (!isset($this->id_jornada)) {
-            $consulta = $this->db->prepare(
-                'INSERT INTO jornada (fecha_jornada, id_competicion) VALUES (?, ?)'
-            );
-            $consulta->bindParam(1, $this->fecha_jornada);
-            $consulta->bindParam(2, $this->id_competicion);
-            $consulta->execute();
-        } else {
-            $consulta = $this->db->prepare(
-                'UPDATE jornada SET fecha_jornada = ?, id_competicion = ? WHERE id_jornada = ?'
-            );
-            $consulta->bindParam(1, $this->fecha_jornada);
-            $consulta->bindParam(2, $this->id_competicion);
-            $consulta->bindParam(3, $this->id_jornada);
-            $consulta->execute();
-        }
+{
+    if (!isset($this->id_jornada)) {
+        $consulta = $this->db->prepare("INSERT INTO jornada (fecha_jornada, id_competicion) VALUES (?, ?)");
+        $consulta->bindParam(1, $this->fecha_jornada);
+        $consulta->bindParam(2, $this->id_competicion);
+        $consulta->execute();
+        $this->id_jornada = $this->db->lastInsertId(); // <--- ESTO ES CLAVE
+    } else {
+        $consulta = $this->db->prepare("UPDATE jornada SET fecha_jornada = ?, id_competicion = ? WHERE id_jornada = ?");
+        $consulta->bindParam(1, $this->fecha_jornada);
+        $consulta->bindParam(2, $this->id_competicion);
+        $consulta->bindParam(3, $this->id_jornada);
+        $consulta->execute();
     }
+}
+
 
     // Eliminar
     public function delete()

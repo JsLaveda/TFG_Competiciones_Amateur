@@ -130,6 +130,12 @@ ALTER TABLE `equipo`
   ADD PRIMARY KEY (`id_equipo`),
   ADD KEY `equipo_ibfk_1` (`id_competicion`);
 
+
+ALTER TABLE partido 
+MODIFY puntuacion1 INT NULL,
+MODIFY puntuacion2 INT NULL;
+
+
 --
 -- Indices de la tabla `jornada`
 --
